@@ -1,18 +1,43 @@
-import { createElement, forwardRef } from "react";
+import {
+  createElement,
+  forwardRef,
+  ComponentClass,
+  FunctionComponent
+} from "react";
 
 declare type Fn = (props: object) => object;
+declare type Component = string | ComponentClass | FunctionComponent;
 
-const mapProps = (propsMapper: Fn) => (BaseComponent: string) =>
-  forwardRef((props: object, ref) =>
-    createElement(BaseComponent, propsMapper({ ...props, ref }))
-  );
+const getDisplayName = (Component: Component) => {
+  if (typeof Component === "string") {
+    return Component;
+  }
 
-const withProps = (input: Fn | object) =>
-  mapProps(props => ({
+  if (!Component) {
+    return undefined;
+  }
+
+  return Component.displayName || Component.name || "Component";
+};
+
+const mapProps = (propsMapper: Fn) => (BaseComponent: Component) =>
+  forwardRef((props: object, ref) => {
+    return createElement(BaseComponent, propsMapper({ ...props, ref }));
+  });
+
+const withProps = (input: Fn | object) => {
+  const hoc = mapProps(props => ({
     ...(typeof input === "function" ? input(props) : input),
     ...props
   }));
 
-withProps.displayName = "withProps";
+  return (BaseComponent: Component) => {
+    BaseComponent["displayName"] = `withProps(${getDisplayName(
+      BaseComponent
+    )})`;
+
+    return hoc(BaseComponent);
+  };
+};
 
 export { withProps };
