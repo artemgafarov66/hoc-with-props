@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from "react";
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -16,19 +16,33 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
 var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
+  __assign =
+    Object.assign ||
+    function __assign(t) {
+      for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s)
+          if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+      return t;
     };
-    return __assign.apply(this, arguments);
+  return __assign.apply(this, arguments);
 };
 
-var mapProps = function (propsMapper) { return function (BaseComponent) { return function (props) { return React.createElement(BaseComponent, propsMapper(props)); }; }; };
-var withProps = function (input) {
-    return mapProps(function (props) { return (__assign(__assign({}, props), (typeof input === "function" ? input(props) : input))); });
+var mapProps = function(propsMapper) {
+  return function(BaseComponent) {
+    return function(props) {
+      return React.createElement(BaseComponent, propsMapper(props));
+    };
+  };
+};
+var withProps = function(input) {
+  return mapProps(function(props) {
+    return __assign(
+      __assign({}, props),
+      typeof input === "function" ? input(props) : input
+    );
+  });
 };
 
 export { withProps };

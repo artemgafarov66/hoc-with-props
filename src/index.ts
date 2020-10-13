@@ -1,11 +1,18 @@
-import React from "react";
+import { createElement, forwardRef } from "react";
 
-const mapProps = (propsMapper: (props: object) => {} | object) => (
-  BaseComponent: string
-) => (props: object) => React.createElement(BaseComponent, propsMapper(props));
+declare type Fn = (props: object) => object;
 
-export const withProps = (input: (props: object) => {} | object) =>
+const mapProps = (propsMapper: Fn) => (BaseComponent: string) =>
+  forwardRef((props: object, ref) =>
+    createElement(BaseComponent, propsMapper({ ...props, ref }))
+  );
+
+const withProps = (input: Fn | object) =>
   mapProps(props => ({
-    ...props,
-    ...(typeof input === "function" ? input(props) : input)
+    ...(typeof input === "function" ? input(props) : input),
+    ...props
   }));
+
+withProps.displayName = "withProps";
+
+export { withProps };
